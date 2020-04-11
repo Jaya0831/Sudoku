@@ -281,7 +281,7 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator WrongInput()
     {
-        GameObject text = GameObject.Instantiate(wrongText, new Vector3(995, 140, 1), Quaternion.identity, canvas.transform);
+        GameObject text = GameObject.Instantiate(wrongText, new Vector3(500, 25, 1), Quaternion.identity, canvas.transform);
         yield return new WaitForSeconds(3);
         Destroy(text);
     }
