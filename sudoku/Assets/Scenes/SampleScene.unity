@@ -296,10 +296,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 4
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -307,7 +307,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: "\u6570\u72EC\u6C42\u89E3"
 --- !u!222 &157619511
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -847,6 +847,10 @@ MonoBehaviour:
   inputBox: {fileID: 3322959906098129391, guid: 847b04172fcd54b2da13f7fcdf2ead27,
     type: 3}
   panel: {fileID: 1765155930}
+  buttons: []
+  wrongText: {fileID: 0}
+  canvas: {fileID: 0}
+  wrong: {fileID: 0}
 --- !u!4 &1321527352
 Transform:
   m_ObjectHideFlags: 0
@@ -918,10 +922,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 4
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -929,7 +933,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: "\u68C0\u9A8C\u6570\u72EC"
 --- !u!222 &1325483054
 CanvasRenderer:
   m_ObjectHideFlags: 0
