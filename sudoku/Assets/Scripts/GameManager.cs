@@ -85,6 +85,8 @@ public class GameManager : MonoBehaviour
                 for (int j = 0; j < 9; j++)
                 {
                     UpdateNumber(sudoku[i, j], sudoku[i, j].GetComponent<Node>().number);
+                    sudoku[i, j].GetComponentsInChildren<Text>()[1].enabled = false;
+                    sudoku[i, j].GetComponentsInChildren<Text>()[0].enabled = true;
                 }
             }
         }
@@ -192,6 +194,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SolveTheSudoku()
     {
+        if (buttons[(int)Buttonable.GenerateByPlayer] == true)
+        {
+            GenerateByPlayer();
+        }
         if (Solve(false, 0, 0) == true)
         {
             for (int i = 0; i < 9; i++)
