@@ -119,10 +119,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public bool Solve(bool random, int line, int row)
     {
-        if (buttons[(int)Buttonable.GenerateByPlayer].interactable == true)
-        {
-            GenerateByPlayer();
-        }
+        
         // 完成
         if (line == 9) return true;
         // 这个格子不需要填
@@ -198,6 +195,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SolveTheSudoku()
     {
+        if (buttons[(int)Buttonable.GenerateByPlayer].interactable == true)
+        {
+            GenerateByPlayer();
+        }
         if (Solve(false, 0, 0) == true)
         {
             for (int i = 0; i < 9; i++)
@@ -384,4 +385,5 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
         ButtonController(Buttonable.Renew);
     }
+    
 }
