@@ -25,12 +25,16 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 控制按钮交互的规则
     /// </summary>
-    int[,] rule = { { 0, 0, 1, 1, 1 }, { 0, 1, 0, 0, 1 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 1, 1 }, { 1, 1, 0, 0, 0 } };
+    int[,] rule = { { 0, 0, 1, 1, 1 }, { 0, 1, 1, 1, 1 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 1, 1 }, { 1, 1, 0, 0, 0 } };
     /// <summary>
     /// 数独
     /// </summary>
     ///
     private GameObject[,] sudoku = new GameObject[9, 9];
+    public enum Solution { None, Unique, Multiple };
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,10 +69,11 @@ public class GameManager : MonoBehaviour
         node.GetComponentInChildren<Text>().text = "" + num;
     }
     /// <summary>
-    /// 随机生成完整的数独
+    /// 随机生成数独
     /// </summary>
     public void GenerateAutomatic()
     {
+        t = 0;
         for (int i = 0; i < 9; i++)
         {
             for (int j = 0; j < 9; j++)
@@ -77,19 +82,46 @@ public class GameManager : MonoBehaviour
                 sudoku[i, j].GetComponent<Node>().fix = false;
             }
         }
-        GenerateASquare();
-        if (Solve(true, 0, 0) == true)
+        Solution solution = Solution.Multiple;
+        while (solution == Solution.Multiple)
         {
+            int line = Random.Range(0, 9), row = Random.Range(0, 9);
+            Debug.Log("Generate:" + line + "," + row);
+            if (sudoku[line, row].GetComponent<Node>().fix == true) { continue; }
+            DeleteImpossibleNum(line, row);
+            UpdateNumber(sudoku[line, row], sudoku[line, row].GetComponent<Node>().possibleNumber[Random.Range(0, sudoku[line, row].GetComponent<Node>().possibleNumber.Count)]);
+            sudoku[line, row].GetComponentsInChildren<Text>()[1].enabled = false;
+            sudoku[line, row].GetComponentsInChildren<Text>()[0].enabled = true;
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    UpdateNumber(sudoku[i, j], sudoku[i, j].GetComponent<Node>().number);
-                    sudoku[i, j].GetComponentsInChildren<Text>()[1].enabled = false;
-                    sudoku[i, j].GetComponentsInChildren<Text>()[0].enabled = true;
+                    if (sudoku[i, j].GetComponent<Node>().fix == false)
+                    {
+                        sudoku[i, j].GetComponent<Node>().number = 0;
+                    }
+
                 }
             }
+            int times = 0;
+            solution = Solve(false, 0, 0, 0, ref times);
+            Debug.Log("Solution:" + solution);
         }
+        //GenerateASquare();
+        //Solution solution = Solve(true, 0, 0, 0);
+        //Debug.Log(solution);
+        //if (solution != Solution.None)
+        //{
+        //    for (int i = 0; i < 9; i++)
+        //    {
+        //        for (int j = 0; j < 9; j++)
+        //        {
+        //UpdateNumber(sudoku[i, j], sudoku[i, j].GetComponent<Node>().number);
+        //sudoku[i, j].GetComponentsInChildren<Text>()[1].enabled = false;
+        //sudoku[i, j].GetComponentsInChildren<Text>()[0].enabled = true;
+        //        }
+        //    }
+        //}
         ButtonController(Buttonable.GenerateAutomatic);
     }
     /// <summary>
@@ -111,24 +143,37 @@ public class GameManager : MonoBehaviour
         }
     }
     /// <summary>
-    /// 数独求解 
+    /// 数独求解
     /// </summary>
     /// <param name="random"></param>
     /// <param name="line"></param>
     /// <param name="row"></param>
+    /// <param name="count"></param>
+    /// <param name="times"></param>
     /// <returns></returns>
-    public bool Solve(bool random, int line, int row)
+    public Solution Solve(bool random, int line, int row, int count, ref int times)
     {
-        
+        times++;
+        Debug.Log("hi");
         // 完成
-        if (line == 9) return true;
+        if (line == 9)
+        {
+            if (count == 0)
+            {
+                return Solution.Unique;
+            }
+            else if (count == 1)
+            {
+                return Solution.Multiple;
+            }
+        }
         // 这个格子不需要填
         if (sudoku[line, row].GetComponent<Node>().fix == true)
         {
-            if (row == 8) return Solve(random, line + 1, 0);
-            else return Solve(random, line, row + 1);
+            if (row == 8) return Solve(random, line + 1, 0, count, ref times);
+            else return Solve(random, line, row + 1, count, ref times) ;
         }
-        bool success = false;
+        Solution solution = Solution.None;
         DeleteImpossibleNum(line, row);
         if (sudoku[line, row].GetComponent<Node>().possibleNumber.Count != 0)
         {
@@ -150,14 +195,19 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < sudoku[line, row].GetComponent<Node>().possibleNumber.Count; i++)
             {
                 sudoku[line, row].GetComponent<Node>().number = sudoku[line, row].GetComponent<Node>().possibleNumber[i];
-                if (row == 8) success = Solve(random, line + 1, 0);
-                else success = Solve(random, line, row + 1);
-                if (success) break;
+                if (row == 8) solution = Solve(random, line + 1, 0, count, ref times);
+                else solution = Solve(random, line, row + 1, count, ref times) ;
+                if (solution == Solution.Unique) { count = 1; }
+                Debug.Log(times);
+                if (solution == Solution.Multiple || (solution == Solution.Unique && times > 2000)) break ;
             }
-            if (success == false) sudoku[line, row].GetComponent<Node>().number = 0;
-            return success;
+            if (solution != Solution.Multiple)
+            {
+                sudoku[line, row].GetComponent<Node>().number = 0;
+            }
+            return solution;
         }
-        else return false;
+        else return solution;
     }
     /// <summary>
     /// 删除不可能的数字 
@@ -199,7 +249,8 @@ public class GameManager : MonoBehaviour
         {
             GenerateByPlayer();
         }
-        if (Solve(false, 0, 0) == true)
+        int times = 0;
+        if (Solve(false, 0, 0, 1, ref times) != Solution.None)       
         {
             for (int i = 0; i < 9; i++)
             {
@@ -385,5 +436,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
         ButtonController(Buttonable.Renew);
     }
-    
+    /// <summary>
+    /// 生成可填写的数独
+    /// </summary>
 }
