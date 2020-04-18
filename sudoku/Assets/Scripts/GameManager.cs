@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 控制按钮交互的规则
     /// </summary>
-    int[,] rule = { { 0, 0, 1, 1, 1 }, { 0, 1, 0, 0, 1 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 1, 1 }, { 1, 1, 0, 0, 0 } };
+    int[,] rule = { { 0, 0, 1, 1, 1 }, { 0, 0, 1, 1, 1 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 1, 1 }, { 1, 1, 0, 0, 0 } };
     /// <summary>
     /// 数独
     /// </summary>
@@ -80,13 +80,17 @@ public class GameManager : MonoBehaviour
         GenerateASquare();
         if (Solve(true, 0, 0) == true)
         {
-            for (int i = 0; i < 9; i++)
+            int filled = 0;
+            while (filled < 32) 
             {
-                for (int j = 0; j < 9; j++)
+                int line = Random.Range(0, 9);
+                int row = Random.Range(0, 9);
+                if (sudoku[line, row].GetComponent<Node>().fix != true) 
                 {
-                    UpdateNumber(sudoku[i, j], sudoku[i, j].GetComponent<Node>().number);
-                    sudoku[i, j].GetComponentsInChildren<Text>()[1].enabled = false;
-                    sudoku[i, j].GetComponentsInChildren<Text>()[0].enabled = true;
+                    filled++;
+                    UpdateNumber(sudoku[line, row], sudoku[line, row].GetComponent<Node>().number);
+                    sudoku[line, row].GetComponentsInChildren<Text>()[1].enabled = false;
+                    sudoku[line, row].GetComponentsInChildren<Text>()[0].enabled = true;
                 }
             }
         }
@@ -105,7 +109,8 @@ public class GameManager : MonoBehaviour
             for (int k = 3 * temp_2; k < 3 * temp_2 + 3; k++)
             {
                 int temp = From0To9[Random.Range(0, From0To9.Count)];
-                UpdateNumber(sudoku[j, k], temp);
+                sudoku[j, k].GetComponent<Node>().fix = true;
+                sudoku[j, k].GetComponent<Node>().number = temp;
                 From0To9.Remove(temp);
             }
         }
